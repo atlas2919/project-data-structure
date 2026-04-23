@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>HeapSort Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<h1 class="page-title">HEAPSORT — DEMO</h1>
+
+<div class="controls">
+  <button class="btn" onclick="nuevoArreglo()">nuevo arreglo</button>
+  <button class="btn active" id="btnAlgo" onclick="cycleAlgo()">heapsort</button>
+  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; iniciar</button>
+  <button class="btn" id="btnStep" onclick="stepOne()">paso a paso</button>
+  <button class="btn" onclick="resetAll()">reiniciar</button>
+  <div class="speed-row">
+    velocidad
+    <input type="range" min="1" max="5" value="3" step="1" id="spd">
+  </div>
+</div>
+
+<div class="legend">
+  <div class="li"><div class="lsq" style="background:#B4B2A9"></div>sin procesar</div>
+  <div class="li"><div class="lsq" style="background:#EF9F27"></div>en heap</div>
+  <div class="li"><div class="lsq" style="background:#1D9E75"></div>comparando</div>
+  <div class="li"><div class="lsq" style="background:#378ADD"></div>intercambiando</div>
+  <div class="li"><div class="lsq" style="background:#5DCAA5"></div>ordenado</div>
+</div>
+
+<div class="algo-label" id="algoLabel">heapsort — listo</div>
+
+<div class="bars-container">
+  <div class="bars-wrap" id="barsWrap"></div>
+</div>
+
+<div class="cards" id="cardsRow">
+  <div class="card" id="cardHeap">
+    <div class="cname">heapsort</div>
+    <div class="cstat">comparaciones: <b id="hcmp">—</b></div>
+    <div class="cstat">intercambios: <b id="hswp">—</b></div>
+    <div class="cstat">tiempo: <b id="htime">—</b></div>
+    <div class="ccmplx">O(n log n) siempre</div>
+  </div>
+  <!-- Aquí agregarás más cards cuando integres otros algoritmos -->
+</div>
+
+<div class="log" id="logBox"></div>
+<div class="err" id="errBox"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

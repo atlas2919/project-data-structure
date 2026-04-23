@@ -1,0 +1,136 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0d0d0d;
+  color: #e0e0e0;
+  padding: 24px;
+}
+
+.page-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  letter-spacing: .1em;
+  margin-bottom: 18px;
+}
+
+.controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.btn {
+  padding: 7px 16px;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  background: #141414;
+  color: #e0e0e0;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.btn:hover  { background: #1e1e1e; }
+.btn.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.speed-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #555;
+  margin-left: auto;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.li  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #666; }
+.lsq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+.algo-label {
+  font-size: 11px;
+  color: #444;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.bars-container { margin-bottom: 28px; }
+
+.bars-wrap {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+  height: 200px;
+}
+
+.bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  transition: height .15s, background .15s;
+  position: relative;
+  min-width: 0;
+}
+
+.bval {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.card {
+  border: 1px solid #1e1e1e;
+  border-radius: 10px;
+  padding: 12px 14px;
+  background: #111;
+  min-width: 180px;
+  flex: 1;
+}
+.card.active { border-color: #1D9E75; }
+.card.done   { border-color: #378ADD; }
+
+.cname  { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+.cstat  { font-size: 11px; color: #666; line-height: 1.9; }
+.cstat b { color: #e0e0e0; font-weight: 500; }
+.ccmplx {
+  font-size: 10px;
+  color: #444;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #1e1e1e;
+}
+
+.log {
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #555;
+  height: 80px;
+  overflow-y: auto;
+  font-family: monospace;
+  line-height: 1.7;
+}
+.log .hl { color: #1D9E75; }
+
+.err { color: #E24B4A; font-size: 12px; margin-top: 8px; min-height: 18px; }
