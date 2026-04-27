@@ -19,6 +19,7 @@ public class SortController {
   private static final String CMP = "#1D9E75";
   private static final String SWP = "#378ADD";
   private static final String DONE = "#5DCAA5";
+  private static final String OUT = "#444441"; // gris oscuro = fuera del rango actual
 
   private int[] currentArr = generateArr(14);
 
@@ -217,19 +218,38 @@ public class SortController {
   }
 
   private void quickHelper(int[] a, int lo, int hi, List<SortStep> steps, int[] cmp, int[] swp) {
-    if (lo >= hi) return;
+    if (lo >= hi) {
+      if (lo == hi) {
+        // elemento individual ya está en su lugar
+        String[] cf = new String[a.length];
+        for (int k = 0; k < a.length; k++) cf[k] = k < lo || k > hi ? OUT : DONE;
+        steps.add(
+            make(a, cf, cmp[0], swp[0], "elemento " + a[lo] + " ya en su posición", 0, false));
+      }
+      return;
+    }
+
     int pivot = a[hi];
     int i = lo;
 
+    // mostrar rango actual — fuera del rango en gris oscuro
     String[] c0 = new String[a.length];
-    for (int k = 0; k < a.length; k++) c0[k] = k == hi ? HEAP : k < lo || k > hi ? DONE : IDLE;
-    steps.add(make(a, c0, cmp[0], swp[0], "pivote = " + pivot + " en posición " + hi, 0, false));
+    for (int k = 0; k < a.length; k++) c0[k] = k < lo || k > hi ? OUT : k == hi ? HEAP : IDLE;
+    steps.add(
+        make(
+            a,
+            c0,
+            cmp[0],
+            swp[0],
+            "pivote = " + pivot + " rango [" + lo + "," + hi + "]",
+            0,
+            false));
 
     for (int j = lo; j < hi; j++) {
       cmp[0]++;
       String[] c = new String[a.length];
       for (int k = 0; k < a.length; k++)
-        c[k] = k == hi ? HEAP : k < lo || k > hi ? DONE : k == j ? CMP : IDLE;
+        c[k] = k < lo || k > hi ? OUT : k == hi ? HEAP : k == j ? CMP : IDLE;
       steps.add(
           make(a, c, cmp[0], swp[0], "comparando " + a[j] + " con pivote " + pivot, 0, false));
 
@@ -240,18 +260,19 @@ public class SortController {
         a[j] = tmp;
         String[] c2 = new String[a.length];
         for (int k = 0; k < a.length; k++)
-          c2[k] = k == hi ? HEAP : k < lo || k > hi ? DONE : (k == i || k == j) ? SWP : IDLE;
+          c2[k] = k < lo || k > hi ? OUT : k == hi ? HEAP : (k == i || k == j) ? SWP : IDLE;
         steps.add(make(a, c2, cmp[0], swp[0], "intercambia " + a[j] + "↔" + a[i], 0, false));
         i++;
       }
     }
 
+    // colocar pivote en posición final
     swp[0]++;
     int tmp = a[i];
     a[i] = a[hi];
     a[hi] = tmp;
     String[] cf = new String[a.length];
-    for (int k = 0; k < a.length; k++) cf[k] = k < lo || k > hi ? DONE : k == i ? DONE : IDLE;
+    for (int k = 0; k < a.length; k++) cf[k] = k < lo || k > hi ? OUT : k == i ? DONE : IDLE;
     steps.add(make(a, cf, cmp[0], swp[0], "pivote " + a[i] + " en posición final " + i, 0, false));
 
     quickHelper(a, lo, i - 1, steps, cmp, swp);
