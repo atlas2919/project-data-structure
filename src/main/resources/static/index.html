@@ -1,54 +1,153 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Sort Demo</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sort Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="header">
+      <span class="page-title">SORT — DEMO</span>
+      <span class="algo-pill" id="algoLabel">heapsort</span>
+    </div>
 
-<h1 class="page-title">SORT — DEMO</h1>
+    <!-- Controles fila 1: arreglo + algoritmo -->
+    <div class="controls-top">
+      <button class="btn" onclick="nuevoArreglo()">nuevo arreglo</button>
+      <div class="size-row">
+        <input
+          type="number"
+          id="arrSize"
+          value="14"
+          min="2"
+          max="1000"
+          class="size-input"
+        />
+        <span class="muted">elem.</span>
+      </div>
+      <button class="btn btn-algo" id="btnAlgo" onclick="cycleAlgo()">
+        heapsort
+      </button>
+    </div>
 
-<div class="controls">
-  <button class="btn" onclick="nuevoArreglo()">nuevo arreglo</button>
-  <button class="btn active" id="btnAlgo" onclick="cycleAlgo()">heapsort</button>
-  <button class="btn" id="btnPlay" onclick="togglePlay()">&#9654; iniciar</button>
-  <button class="btn" id="btnStep" onclick="stepOne()">paso a paso</button>
-  <button class="btn" onclick="resetAll()">reiniciar</button>
-  <div class="speed-row">
-    velocidad
-    <input type="range" min="1" max="5" value="3" step="1" id="spd">
-  </div>
-</div>
+    <!-- Controles fila 2: acciones -->
+    <div class="controls-bottom">
+      <button class="btn btn-play" id="btnPlay" onclick="togglePlay()">
+        &#9654; iniciar
+      </button>
+      <button class="btn btn-step" id="btnStep" onclick="stepOne()">
+        paso a paso
+      </button>
+      <button class="btn" onclick="resetAll()">reiniciar</button>
+      <div class="speed-row">
+        <span class="muted">vel.</span>
+        <input type="range" min="1" max="5" value="3" step="1" id="spd" />
+      </div>
+    </div>
 
-<div class="legend">
-  <div class="li"><div class="lsq" style="background:#B4B2A9"></div>sin procesar</div>
-  <div class="li"><div class="lsq" style="background:#EF9F27"></div>en heap</div>
-  <div class="li"><div class="lsq" style="background:#1D9E75"></div>comparando</div>
-  <div class="li"><div class="lsq" style="background:#378ADD"></div>intercambiando</div>
-  <div class="li"><div class="lsq" style="background:#5DCAA5"></div>ordenado</div>
-</div>
+    <!-- Leyenda -->
+    <div class="legend">
+      <div class="li">
+        <div class="lsq" style="background: #b4b2a9"></div>
+        sin procesar
+      </div>
+      <div class="li">
+        <div class="lsq" style="background: #ef9f27"></div>
+        heap/cubeta
+      </div>
+      <div class="li">
+        <div class="lsq" style="background: #1d9e75"></div>
+        comparando
+      </div>
+      <div class="li">
+        <div class="lsq" style="background: #378add"></div>
+        intercambiando
+      </div>
+      <div class="li">
+        <div class="lsq" style="background: #5dcaa5"></div>
+        ordenado
+      </div>
+    </div>
 
-<div class="algo-label" id="algoLabel">heapsort — listo</div>
+    <!-- Barras -->
+    <div class="bars-container">
+      <div class="bars-wrap" id="barsWrap"></div>
+    </div>
 
-<div class="bars-container">
-  <div class="bars-wrap" id="barsWrap"></div>
-</div>
+    <!-- Card activa (solo muestra la del algoritmo actual) -->
+    <div class="cards" id="cardsRow">
+      <div class="card" id="cardHeap">
+        <div class="card-top">
+          <span class="cname">heapsort</span>
+          <span class="cbadge">O(n log n)</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="hcmp">—</div>
+            <div class="stat-lbl">comparaciones</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="hswp">—</div>
+            <div class="stat-lbl">intercambios</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="htime">—</div>
+            <div class="stat-lbl">tiempo</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="cardBucket">
+        <div class="card-top">
+          <span class="cname">bucketsort</span>
+          <span class="cbadge">O(n+k)</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="bucmp">—</div>
+            <div class="stat-lbl">comparaciones</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="buswp">—</div>
+            <div class="stat-lbl">intercambios</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="butime">—</div>
+            <div class="stat-lbl">tiempo</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="cardQuick">
+        <div class="card-top">
+          <span class="cname">quicksort</span>
+          <span class="cbadge">O(n log n)</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-val" id="qcmp">—</div>
+            <div class="stat-lbl">comparaciones</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="qswp">—</div>
+            <div class="stat-lbl">intercambios</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-val" id="qtime">—</div>
+            <div class="stat-lbl">tiempo</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<div class="cards" id="cardsRow">
-  <div class="card" id="cardHeap">
-    <div class="cname">heapsort</div>
-    <div class="cstat">comparaciones: <b id="hcmp">—</b></div>
-    <div class="cstat">intercambios: <b id="hswp">—</b></div>
-    <div class="cstat">tiempo: <b id="htime">—</b></div>
-    <div class="ccmplx">O(n log n) siempre</div>
-  </div>
-  <!-- Aquí agregarás más cards cuando integres otros algoritmos -->
-</div>
+    <!-- Log -->
+    <div class="log" id="logBox"></div>
+    <div class="err" id="errBox"></div>
 
-<div class="log" id="logBox"></div>
-<div class="err" id="errBox"></div>
+    <script src="app.js"></script>
 
-<script src="app.js"></script>
-</body>
+    <div class="credits">
+      Desarrollado por Alex Yong, Jose Daniel Herrera y Jose Miguel Cortes ·
+      Estructuras de Datos · 2026
+    </div>
+  </body>
 </html>
