@@ -16,6 +16,7 @@ let playing = false;
 let timer = null;
 let arr = [];
 let t0 = null;
+let loading = false;
 
 function spd() {
   const base = [500, 300, 160, 80, 35][
@@ -26,7 +27,19 @@ function spd() {
   return base;
 }
 
+// ── Bloquear / desbloquear botones ────────────────────────────────────────────
+function setButtonsDisabled(disabled) {
+  ["btnPlay", "btnStep", "btnAlgo"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = disabled;
+  });
+  const sizeInput = document.getElementById("arrSize");
+  if (sizeInput) sizeInput.disabled = disabled;
+}
+
+// ── Nuevo arreglo ─────────────────────────────────────────────────────────────
 async function nuevoArreglo() {
+  if (loading) return;
   resetAll();
   const size = Math.min(
     1000,
@@ -47,9 +60,14 @@ async function nuevoArreglo() {
   }
 }
 
+// ── Cargar pasos ──────────────────────────────────────────────────────────────
 async function cargarPasos() {
+  if (loading) return false;
+  loading = true;
+  setButtonsDisabled(true);
+  document.getElementById("btnPlay").textContent = "⏳ cargando...";
   try {
-    const r = await fetch(API + "/pasos?algo=" + algo);
+    const r = await fetch(API + "/pasos?algo=" + algo + "&size=" + arr.length);
     steps = await r.json();
     idx = 0;
     clearErr();
@@ -57,14 +75,20 @@ async function cargarPasos() {
   } catch (e) {
     showErr("Error al obtener pasos del servidor.");
     return false;
+  } finally {
+    loading = false;
+    setButtonsDisabled(false);
+    document.getElementById("btnPlay").textContent = "▶ iniciar";
   }
 }
 
+// ── Play / Pause ──────────────────────────────────────────────────────────────
 async function togglePlay() {
   if (playing) {
     stopPlay();
     return;
   }
+  if (loading) return;
   if (!steps.length) {
     const ok = await cargarPasos();
     if (!ok) return;
@@ -92,23 +116,9 @@ function stopPlay() {
   document.getElementById("btnPlay").classList.remove("active");
 }
 
-async function togglePlay() {
-  if (playing) {
-    stopPlay();
-    return;
-  }
-  if (!steps.length) {
-    const ok = await cargarPasos();
-    if (!ok) return;
-  }
-  playing = true;
-  t0 = performance.now();
-  document.getElementById("btnPlay").textContent = "⏸ pausar";
-  document.getElementById("btnPlay").classList.add("active");
-  tick();
-}
-
+// ── Paso a paso ───────────────────────────────────────────────────────────────
 async function stepOne() {
+  if (playing || loading) return;
   if (!steps.length) {
     const ok = await cargarPasos();
     if (!ok) return;
@@ -117,11 +127,13 @@ async function stepOne() {
   if (idx < steps.length) applyStep(steps[idx++]);
 }
 
+// ── Reiniciar ─────────────────────────────────────────────────────────────────
 function resetAll() {
   stopPlay();
   steps = [];
   idx = 0;
   t0 = null;
+  setButtonsDisabled(false);
   ["Heap", "Bucket", "Quick"].forEach((id) => setCard(id, ""));
   if (arr.length)
     renderBars(
@@ -130,17 +142,19 @@ function resetAll() {
     );
   setLabel(names[algo] + " — listo");
   ["h", "bu", "q"].forEach((p) => setStat(p, "—", "—", "—"));
-  // mostrar solo la card del algoritmo actual
   showActiveCard();
 }
 
+// ── Ciclar algoritmo ──────────────────────────────────────────────────────────
 function cycleAlgo() {
+  if (loading) return;
   algo = algos[(algos.indexOf(algo) + 1) % algos.length];
   document.getElementById("btnAlgo").textContent = names[algo];
   resetAll();
   showActiveCard();
 }
 
+// ── Aplicar paso ──────────────────────────────────────────────────────────────
 function applyStep(s) {
   renderBars(s.arr, s.colors);
   const prefix = prefixMap[algo];
@@ -163,6 +177,7 @@ function applyStep(s) {
   log(tag + s.msg, s.done);
 }
 
+// ── Render barras ─────────────────────────────────────────────────────────────
 function renderBars(a, colors) {
   const wrap = document.getElementById("barsWrap");
   const mx = Math.max(...a) || 1;
@@ -183,6 +198,7 @@ function renderBars(a, colors) {
   });
 }
 
+// ── UI helpers ────────────────────────────────────────────────────────────────
 function setLabel(t) {
   document.getElementById("algoLabel").textContent = t;
 }
@@ -198,8 +214,7 @@ function showActiveCard() {
     const el = document.getElementById("card" + id);
     if (el) el.className = "card";
   });
-  const cardId = cardMap[algo];
-  const el = document.getElementById("card" + cardId);
+  const el = document.getElementById("card" + cardMap[algo]);
   if (el) el.classList.add("active");
 }
 
@@ -225,19 +240,6 @@ function log(msg, hl = false) {
   while (box.children.length > 25) box.removeChild(box.firstChild);
 }
 
-async function cargarPasos() {
-  try {
-    const size = arr.length;
-    const r = await fetch(API + "/pasos?algo=" + algo + "&size=" + size);
-    steps = await r.json();
-    idx = 0;
-    clearErr();
-    return true;
-  } catch (e) {
-    showErr("Error al obtener pasos del servidor.");
-    return false;
-  }
-}
-
+// ── Inicio ────────────────────────────────────────────────────────────────────
 nuevoArreglo();
 showActiveCard();

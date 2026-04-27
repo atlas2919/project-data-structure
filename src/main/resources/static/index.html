@@ -23,6 +23,10 @@
           min="2"
           max="1000"
           class="size-input"
+          oninput="
+            clearTimeout(window._sizeTimer);
+            window._sizeTimer = setTimeout(nuevoArreglo, 600);
+          "
         />
         <span class="muted">elem.</span>
       </div>
